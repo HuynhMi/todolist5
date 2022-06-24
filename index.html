@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./assets/css/base.css">
+    <link rel="stylesheet" href="./assets/css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+<body>
+    <div id="todo-app">
+        <div class="todo__header">
+            <span class="material-symbols-outlined todo__header-icon">notes</span>
+            <input type="text" class="todo__input-text" placeholder="Add a new task">
+        </div>
+        <div class="todo__controls">
+            <div class="todo__filter-wrap">
+                <span class="todo__filter active">All</span>
+                <span class="todo__filter">Pending</span>
+                <span class="todo__filter">Completed</span>
+            </div>
+            <button class="todo__btn">Clear All</button>
+        </div>
+        <ul class="todo__list">
+            <li class="todo__item">
+                <div class="todo__item-inner">
+                    <input type="checkbox" class="todo__input-checkbox" id="0">
+                    <label for="0" class="toto__input-label">Renew gym membership</label>
+                </div>
+                <div class="todo__options">
+                    <span class="material-symbols-outlined">more_horiz</span>
+                    <div class="todo__options-inner">
+                        <div class="todo__option-item">
+                            <span class="material-symbols-outlined">
+                                edit
+                                </span> Edit
+                        </div>
+                        <div class="todo__option-item">
+                            <span class="material-symbols-outlined">
+                                delete
+                                </span> Delete
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
