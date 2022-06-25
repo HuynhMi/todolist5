@@ -14,13 +14,16 @@ const $$ = document.querySelectorAll.bind(document);
 const inputElement = $('.todo__input-text');
 const listElement = $('.todo__list');
 let btnFilters = $$('.todo__filter');
+let btnClearAll = $('#clear-all-btn');
 
 const APP_STORAGE_KEY = 'MYTODOS';
 
 const app = {
     tasksList:  JSON.parse(localStorage.getItem(APP_STORAGE_KEY)) || [],
     isUpdating: {state: false, id: undefined},
-    renderTasks: function(type) {
+    renderTasks: function() {
+        const btnFiltering = $('.todo__filter.active');
+        const type = btnFiltering.dataset.type;
         let htmls;
         if(this.tasksList.length === 0) {
             htmls = `
@@ -55,69 +58,84 @@ const app = {
     },
     handleEvents: function() {
         _this = this;
+
+        // handle when the user press  the key
         inputElement.onkeyup = function(e) {
-            let task;
             let content = this.value;
             if(e.key === 'Enter' && content) {
-                task = {
-                    content,
-                    state: 'pending'
-                }
-
+                // if it is updating
                 if (_this.isUpdating.state) {
-                    _this.tasksList[_this.isUpdating.id] = task;
+                    _this.tasksList[_this.isUpdating.id].content = content;
+                    _this.isUpdating.state = false;
+                //or add new
                 } else {
+                    const task = {
+                        content,
+                        state: 'pending'
+                    }
                     _this.tasksList.push(task);
                 }
-                
-                _this.renderTasks('all');
+
                 _this.setDataToLocal();
+                _this.renderTasks();
                 this.value = '';
             }
         }
 
-        //update state
+        //handle when the user click to task: checkbox, or edit, or delete
         listElement.onclick = function(e) {
             let element = e.target;
             if (element.classList.contains('todo__input-checkbox')) {
-                _this.updateState(element.id);
+                _this.updateState(element);
             } else if (element.classList.contains('todo__edit')) {
                 element = element.closest('li').querySelector('input');
-                _this.editTask(element.id, _this.tasksList[element.id].content);
+                _this.updateTask(element.id, _this.tasksList[element.id].content);
             } else if (element.classList.contains('todo__delete')) {
-                
+                element = element.closest('li').querySelector('input');
+                _this.deleteTask(element.id);
             }
-            
         }
 
-        // filter
+        // change filter
         btnFilters.forEach(function(btn) {
             btn.onclick = function() {
                 $('.todo__filter.active').classList.remove('active');
                 this.classList.add('active');
-                const type = this.dataset.type;
-                _this.renderTasks(type);
+                _this.renderTasks();
             }
         })
+
+        // clear all
+        btnClearAll.onclick = function() {
+            _this.tasksList = [];
+            localStorage.removeItem(APP_STORAGE_KEY);
+            _this.renderTasks();
+        }
 
     },
     setDataToLocal: function() {
         localStorage.setItem(APP_STORAGE_KEY, JSON.stringify(this.tasksList));
     },
-    editTask: function(id, content) {
+    updateTask: function(id, content) {
         inputElement.value = content;
         this.isUpdating = {
             state: true,
             id
         }
     },
-    updateState: function(id) {
-        _this.tasksList[id].state  = element.checked ? 'completed' : 'pending';
-        _this.setDataToLocal();
+    deleteTask: function(id) {
+        this.tasksList.splice(id,1);
+        this.setDataToLocal();
+        this.renderTasks();
+    },
+    updateState: function(element) {
+        this.tasksList[element.id].state  = element.checked ? 'completed' : 'pending';
+        this.setDataToLocal();
+        this.renderTasks();
 
     },
     start: function() {
-        this.renderTasks('all');
+        this.renderTasks();
         this.handleEvents();
     }
 }
